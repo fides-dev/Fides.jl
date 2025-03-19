@@ -1,0 +1,11 @@
+name = "Fides"
+uuid = "18b51ec4-043b-11f0-1953-6f1d11d509fa"
+version = "1.0.0"
+
+[deps]
+ComponentArrays = "b0b7db55-cfe3-40fc-9ded-d10e2dbeff66"
+CondaPkg = "992eb4ea-22a4-4c89-a5bb-47a3300528ab"
+ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
+PythonCall = "6099a3de-0909-46bc-b1f4-468b9a2dfc0d"
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
+SimpleUnPack = "ce78b400-467f-4804-87d8-8f486da07d0a"
