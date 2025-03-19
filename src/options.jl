@@ -16,18 +16,18 @@ Options for the Fides Optimizer.
   - `info`: Information is printed for each iterations.
   - `error`: Only errors are printed.
   - `debug`: Detailed information is printed, typically only of interest for developers.
-- `subspace_solver`: Subspace dimension in which the Trust region subproblem is solved.
-    Allowed options are:
-    - `2D` (default): Two dimensional Newton/Gradient subspace
-    - `scg`: CG subspace via Steihaug’s method
-    - `full`: Full on R^n
-- `subspace_solver`: Refinement method if proposed step reaches optimization boundary.
+- `stepback_strategy`: Refinement method if proposed step reaches optimization boundary.
     Allowed options are:
     - `reflect` (default): Recursive reflections at boundary
     - `refine`: Perform optimization to refine step
     - `reflect_single`: Single reflection at boundary
     - `mixed`: Mix reflections and truncations
     - `trunace`: Truncate step at boundary and re-solve
+- `subspace_solver`: Subspace dimension in which the Trust region subproblem is solved.
+    Allowed options are:
+    - `2D` (default): Two dimensional Newton/Gradient subspace
+    - `scg`: CG subspace via Steihaug’s method
+    - `full`: Full on R^n
 - `delta_init = 1.0`: Initial trust region radius
 - `mu = 0.25`: Acceptance threshold for trust region ratio
 - `eta = 0.75`: Trust region increase threshold for trust region ratio
@@ -87,6 +87,7 @@ function _fides_options(fides_options::FidesOptions)::PythonCall.Py
     options["frtol"] = fides_options.frtol
     options["gatol"] = fides_options.gatol
     options["grtol"] = fides_options.grtol
+    options["maxtime"] = fides_options.maxtime
     options["delta_init"] = fides_options.delta_init
     options["mu"] = fides_options.mu
     options["eta"] = fides_options.eta
