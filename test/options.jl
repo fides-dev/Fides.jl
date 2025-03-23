@@ -1,9 +1,6 @@
-using Fides, ForwardDiff, PythonCall, Test
+using Fides, PythonCall, Test
 
-rosenbrock(u) = (1.0 - u[1])^2 + 100.0 * (u[2] - u[1]^2)^2
-rosenbrock_grad! = (g, x) -> begin
-    ForwardDiff.gradient!(g, rosenbrock, x)
-end
+include(joinpath(@__DIR__, "common.jl"))
 
 fides_prob = FidesProblem(rosenbrock, rosenbrock_grad!, [2.0, 2.0]; lb = [-10.0, -10.0], ub = [10.0, 10.0])
 

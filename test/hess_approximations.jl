@@ -1,15 +1,12 @@
 using Fides, ForwardDiff, Test
 
+include(joinpath(@__DIR__, "common.jl"))
+
 function test_hess_approximation(prob, hess_approximation; tol_fmin= 1e-8, tol_xmin = 1e-4)
     sol = solve(prob, hess_approximation; options = FidesOptions(; maxiter=100000))
     @test sol.fmin ≈ 0.0 atol=tol_fmin
     @test all(.≈(sol.xmin, [1.0, 1.0], atol=tol_xmin))
     return nothing
-end
-
-rosenbrock(u) = (1.0 - u[1])^2 + 100.0 * (u[2] - u[1]^2)^2
-rosenbrock_grad! = (g, x) -> begin
-    ForwardDiff.gradient!(g, rosenbrock, x)
 end
 
 fides_prob = FidesProblem(rosenbrock, rosenbrock_grad!, [2.0, 2.0]; lb = [-10.0, -10.0], ub = [10.0, 10.0])
