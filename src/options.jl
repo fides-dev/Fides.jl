@@ -75,11 +75,11 @@ function FidesOptions(; maxiter::Integer = 1000, fatol::Float64 = 1e-8, frtol::F
 end
 
 """
-    _fides_options(fides_options::FidesOptions)::PythonCall.Py
+    _fides_options(fides_options::FidesOptions)::PythonCall.PythonCall.Py
 
 Converts `fides_options` to a `pydict` as required by Fides.
 """
-function _fides_options(fides_options::FidesOptions)::PythonCall.Py
+function _fides_options(fides_options::FidesOptions)::PythonCall.PythonCall.Py
     # Verbose level is provided directly to the solve-call
     options = PythonCall.pydict()
     options["maxiter"] = fides_options.maxiter

@@ -76,7 +76,7 @@ function _solve(prob::FidesProblem, hess_approximation::Union{HessianUpdate, Not
     runtime = @elapsed begin
         res = fides_opt_py.minimize(np_py.asarray(prob.x0))
     end
-    return FidesSolution(pyconvert(Float64, res[0]), pyconvert(Vector{Float64}, res[1]), pyconvert(Int64, fides_opt_py.iteration), runtime, pyconvert(Symbol, fides_opt_py.exitflag._name_))
+    return FidesSolution(PythonCall.pyconvert(Float64, res[0]), PythonCall.pyconvert(Vector{Float64}, res[1]), PythonCall.pyconvert(Int64, fides_opt_py.iteration), runtime, PythonCall.pyconvert(Symbol, fides_opt_py.exitflag._name_))
 end
 
 function _get_hess_approximation_py(hess_approximation::HessianUpdate)
