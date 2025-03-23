@@ -2,7 +2,8 @@ using Fides, PythonCall, Test
 
 include(joinpath(@__DIR__, "common.jl"))
 
-fides_prob = FidesProblem(rosenbrock, rosenbrock_grad!, [2.0, 2.0]; lb = [-10.0, -10.0], ub = [10.0, 10.0])
+fides_prob = FidesProblem(rosenbrock, rosenbrock_grad!, [2.0, 2.0]; lb = [-10.0, -10.0],
+                          ub = [10.0, 10.0])
 
 @testset "Fides options" begin
     # Test defaults are correct
@@ -24,9 +25,11 @@ fides_prob = FidesProblem(rosenbrock, rosenbrock_grad!, [2.0, 2.0]; lb = [-10.0,
     @test opt.gamma2 == 2.0
 
     # Test that all options can be set to none-default values
-    opt = FidesOptions(maxiter = 100, fatol = 1e-6, frtol = 1e-5, gatol = 1e-3, maxtime = 10.0,
-        grtol = 1e-2, verbose = "warning", stepback_strategy = "refine", subspace_solver = "full",
-        delta_init = 2.0, mu = 0.30, eta = 0.8, theta_max = 0.99, gamma1 = 0.20, gamma2 = 1.9)
+    opt = FidesOptions(maxiter = 100, fatol = 1e-6, frtol = 1e-5, gatol = 1e-3,
+                       maxtime = 10.0, grtol = 1e-2, verbose = "warning",
+                       stepback_strategy = "refine", subspace_solver = "full",
+                       delta_init = 2.0, mu = 0.30, eta = 0.8, theta_max = 0.99,
+                       gamma1 = 0.20, gamma2 = 1.9)
     @test opt.maxiter == 100
     @test opt.fatol == 1e-6
     @test opt.frtol == 1e-5
@@ -68,10 +71,12 @@ fides_prob = FidesProblem(rosenbrock, rosenbrock_grad!, [2.0, 2.0]; lb = [-10.0,
     # Test options are propagated to solve
     sol = solve(fides_prob, Fides.BFGS(); options = FidesOptions(maxiter = 2))
     @test sol.niterations == 2
-    sol = solve(fides_prob, Fides.BFGS(); options = FidesOptions(fatol = 0.0, frtol = 0.0, gatol = 0.0))
+    sol = solve(fides_prob, Fides.BFGS();
+                options = FidesOptions(fatol = 0.0, frtol = 0.0, gatol = 0.0))
     @test sol.retcode == :GTOL
-    sol = solve(fides_prob, Fides.BFGS(); options = FidesOptions(stepback_strategy = "refine"))
-    @test sol.fmin ≈ 0.0 atol=1e-8
+    sol = solve(fides_prob, Fides.BFGS();
+                options = FidesOptions(stepback_strategy = "refine"))
+    @test sol.fmin≈0.0 atol=1e-8
     sol = solve(fides_prob, Fides.BFGS(); options = FidesOptions(subspace_solver = "full"))
-    @test sol.fmin ≈ 0.0 atol=1e-8
+    @test sol.fmin≈0.0 atol=1e-8
 end

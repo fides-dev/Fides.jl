@@ -46,7 +46,8 @@ struct FidesProblem{T <: AbstractVector}
     ub::T
     user_hessian::Bool
 end
-function FidesProblem(f::Function, grad!::Function, x0::InputVector; hess! = nothing, lb = nothing, ub = nothing)
+function FidesProblem(f::Function, grad!::Function, x0::InputVector; hess! = nothing,
+                      lb = nothing, ub = nothing)
     _lb = _get_bounds(x0, lb, :lower)
     _ub = _get_bounds(x0, ub, :upper)
     # To ensure correct input type to f, grad!, hess! a variable having the same type as
@@ -68,7 +69,8 @@ Internally, Fides computes the objective function and derivatives simultaneously
 this constructor is the most runtime-efficient option when intermediate quantities can be
 reused between the objective and derivative computations.
 """
-function FidesProblem(fides_objective::Function, x0::InputVector, hess::Bool; lb = nothing, ub = nothing)
+function FidesProblem(fides_objective::Function, x0::InputVector, hess::Bool; lb = nothing,
+                      ub = nothing)
     _lb = _get_bounds(x0, lb, :lower)
     _ub = _get_bounds(x0, ub, :upper)
     # See xinput comment above
@@ -81,9 +83,12 @@ function FidesProblem(fides_objective::Function, x0::InputVector, hess::Bool; lb
     return FidesProblem(fides_objective, fides_objective_py, x0, _lb, _ub, hess)
 end
 
-function _get_fides_objective(f::Function, grad!::Function, hess!::Union{Function, Nothing}, xinput::InputVector, py::Bool)::Function
+function _get_fides_objective(f::Function, grad!::Function, hess!::Union{Function, Nothing},
+                              xinput::InputVector, py::Bool)::Function
     if !isnothing(hess!)
-        fides_objective = (x) -> let _grad! = grad!, _f = f, _hess! = hess!, _xinput = xinput, _py = py
+        fides_objective = (x) -> let _grad! = grad!, _f = f, _hess! = hess!,
+            _xinput = xinput, _py = py
+
             return _fides_objective(x, _f, _grad!, _hess!, _xinput, _py)
         end
     else
@@ -93,13 +98,15 @@ function _get_fides_objective(f::Function, grad!::Function, hess!::Union{Functio
     end
     return fides_objective
 end
-function _get_fides_objective(f_grad::Function, ::Nothing, xinput::InputVector, py::Bool)::Function
+function _get_fides_objective(f_grad::Function, ::Nothing, xinput::InputVector,
+                              py::Bool)::Function
     fides_objective = (x) -> let _f_grad = f_grad, _xinput = xinput, _py = py
         return _fides_objective(x, _f_grad, nothing, _xinput, _py)
     end
     return fides_objective
 end
-function _get_fides_objective(f_grad_hess::Function, xinput::InputVector, py::Bool)::Function
+function _get_fides_objective(f_grad_hess::Function, xinput::InputVector,
+                              py::Bool)::Function
     fides_objective = (x) -> let _f_grad_hess = f_grad_hess, _xinput = xinput, _py = py
         return _fides_objective(x, _f_grad_hess, _xinput, _py)
     end
@@ -112,7 +119,8 @@ function _fides_objective(x, f::Function, grad!::Function, xinput::InputVector, 
     g = _grad_fides(xinput, grad!)
     return _get_fides_results(obj, g, py)
 end
-function _fides_objective(x, f::Function, grad!::Function, hess!::Function, xinput::InputVector, py::Bool)
+function _fides_objective(x, f::Function, grad!::Function, hess!::Function,
+                          xinput::InputVector, py::Bool)
     _get_xinput!(xinput, x)
     obj = f(xinput)
     g = _grad_fides(xinput, grad!)
@@ -143,7 +151,8 @@ function _hess_fides(x::InputVector, hess!::Function)::Matrix
     return H
 end
 
-function _get_bounds(x0::InputVector, bound::Union{InputVector, Nothing}, which_bound::Symbol)::AbstractVector
+function _get_bounds(x0::InputVector, bound::Union{InputVector, Nothing},
+                     which_bound::Symbol)::AbstractVector
     @assert which_bound in [:lower, :upper] "Only lower and upper bounds are supported"
     !isnothing(bound) && return bound
     _bound = similar(x0)

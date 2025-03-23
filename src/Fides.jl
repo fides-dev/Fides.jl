@@ -25,7 +25,8 @@ include(joinpath(@__DIR__, "problem.jl"))
 include(joinpath(@__DIR__, "options.jl"))
 include(joinpath(@__DIR__, "solve.jl"))
 
-public BB, SR1, BG, BFGS, DFP, Broyden
+# Add when JuliaFormatter supports public
+#public BB, SR1, BG, BFGS, DFP, Broyden
 export solve, FidesProblem, FidesOptions
 
 end

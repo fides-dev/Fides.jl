@@ -1,5 +1,6 @@
 """
     BB(; init_hess = nothing}
+
 The Broydens “bad” method as introduced in [1]. This is a rank 1 update strategy that does
 not preserve symmetry or positive definiteness.
 
@@ -8,7 +9,8 @@ not preserve symmetry or positive definiteness.
     the given matrix is used; if set to `nothing` (default), the identity matrix is used.
 
 ## References
-1. https://doi.org/10.1090%2FS0025-5718-1965-0198670-6
+1. Broyden, C. G. (1965). A class of methods for solving nonlinear simultaneous equations.
+    Mathematics of computation, 19(92), 577-593.
 """
 struct BB{T <: Union{Nothing, AbstractMatrix}}
     init_hess::T
@@ -30,7 +32,8 @@ that preserves symmetry but does not preserve positive-semidefiniteness.
     the given matrix is used; if set to `nothing` (default), the identity matrix is used.
 
 ## References
-1. [Nocedal & Wright](http://dx.doi.org/10.1007/b98874) Chapter 6.2
+1. Nocedal, Jorge, and Stephen J. Wright, eds. Numerical optimization (Chapter 6.2). New
+    York, NY: Springer New York, 1999.
 """
 struct SR1{T <: Union{Nothing, AbstractMatrix}}
     init_hess::T
@@ -52,7 +55,8 @@ preserve symmetry or positive definiteness.
     the given matrix is used; if set to `nothing` (default), the identity matrix is used.
 
 ## References
-1. [Broyden 1965](https://doi.org/10.1090%2FS0025-5718-1965-0198670-6)
+1. Broyden, C. G. (1965). A class of methods for solving nonlinear simultaneous equations.
+    Mathematics of computation, 19(92), 577-593.
 """
 struct BG{T <: Union{Nothing, AbstractMatrix}}
     init_hess::T
@@ -67,7 +71,7 @@ end
     BFGS(; init_hess = nothing, enforce_curv_cond::Bool = true)
 
 The Broyden-Fletcher-Goldfarb-Shanno (BFGS) update strategy is a rank-2 update method that
-preserves both symmetry and positive-semidefiniteness.
+preserves both symmetry and positive-semidefiniteness [1].
 
 ## Keyword arguments
 - `init_hess = nothing`: Initial Hessian for the update scheme. If provided as a `Matrix`,
@@ -75,13 +79,18 @@ preserves both symmetry and positive-semidefiniteness.
 - `enforce_curv_cond = true`: Whether the update should attempt to preserve positive
     definiteness. If `true`, updates from steps that violate the curvature condition are
     discarded.
+
+## References
+1. Nocedal, Jorge, and Stephen J. Wright, eds. Numerical optimization. New York, NY:
+    Springer New York, 1999.
 """
 struct BFGS{T <: Union{Nothing, AbstractMatrix}}
     init_hess::T
     enforce_curv_cond::Bool
     init_with_hess::Bool
 end
-function BFGS(; init_hess::Union{Nothing, AbstractMatrix} = nothing, enforce_curv_cond::Bool = true)
+function BFGS(; init_hess::Union{Nothing, AbstractMatrix} = nothing,
+              enforce_curv_cond::Bool = true)
     init_with_hess = _get_init_with_hess(init_hess)
     return BFGS(init_hess, enforce_curv_cond, init_with_hess)
 end
@@ -89,8 +98,8 @@ end
 """
     DFP(; init_hess = nothing, enforce_curv_cond::Bool = true)
 
-The Davidon-Fletcher-Powell update strategy. This is a rank 2 update strategy that preserves
-symmetry and positive-semidefiniteness.
+The Davidon-Fletcher-Powell update strategy [1]. This is a rank 2 update strategy that
+preserves symmetry and positive-semidefiniteness.
 
 ## Keyword arguments
 - `init_hess = nothing`: Initial Hessian for the update scheme. If provided as a `Matrix`,
@@ -98,13 +107,17 @@ symmetry and positive-semidefiniteness.
 - `enforce_curv_cond = true`: Whether the update should attempt to preserve positive
     definiteness. If `true`, updates from steps that violate the curvature condition are
     discarded.
+
+## References
+1. Avriel, M. (2003). Nonlinear programming: analysis and methods. Courier Corporation.
 """
 struct DFP{T <: Union{Nothing, AbstractMatrix}}
     init_hess::T
     enforce_curv_cond::Bool
     init_with_hess::Bool
 end
-function DFP(; init_hess::Union{Nothing, AbstractMatrix} = nothing, enforce_curv_cond::Bool = true)
+function DFP(; init_hess::Union{Nothing, AbstractMatrix} = nothing,
+             enforce_curv_cond::Bool = true)
     init_with_hess = _get_init_with_hess(init_hess)
     return DFP(init_hess, enforce_curv_cond, init_with_hess)
 end
@@ -114,7 +127,7 @@ end
 
 The update scheme, as described in [1], which is a generalization of the BFGS/DFP methods
 where `phi` controls the convex combination between the two. This rank-2 update strategy
-preserves both symmetry and positive-semidefiniteness when `0 < phi < 1`.
+preserves both symmetry and positive-semidefiniteness when `0 ≤ phi ≤ 1`.
 
 ## Arguments
 - `phi::AbstractFloat`: The convex combination parameter interpolating between BFGS
@@ -128,7 +141,8 @@ preserves both symmetry and positive-semidefiniteness when `0 < phi < 1`.
     discarded.
 
 ## References
-1. [Nocedal & Wright]( http://dx.doi.org/10.1007/b98874) Chapter 6.3
+1. Nocedal, Jorge, and Stephen J. Wright, eds. Numerical optimization. New York, NY:
+    Springer New York, 1999.
 """
 struct Broyden{T <: Union{Nothing, AbstractMatrix}}
     phi::Float64
@@ -136,7 +150,8 @@ struct Broyden{T <: Union{Nothing, AbstractMatrix}}
     enforce_curv_cond::Bool
     init_with_hess::Bool
 end
-function Broyden(phi::AbstractFloat; init_hess::Union{Nothing, AbstractMatrix} = nothing, enforce_curv_cond::Bool = true)
+function Broyden(phi::AbstractFloat; init_hess::Union{Nothing, AbstractMatrix} = nothing,
+                 enforce_curv_cond::Bool = true)
     init_with_hess = _get_init_with_hess(init_hess)
     return Broyden(phi, init_hess, enforce_curv_cond, init_with_hess)
 end

@@ -37,7 +37,8 @@ A complete list of available Hessian approximations is provided in the documenta
 
 See also [FidesOptions](@ref).
 """
-function solve(prob::FidesProblem, hess_approximation::HessianUpdate; options::FidesOptions = FidesOptions())::FidesSolution
+function solve(prob::FidesProblem, hess_approximation::HessianUpdate;
+               options::FidesOptions = FidesOptions())::FidesSolution
     @unpack fides_objective_py, lb, ub, user_hessian = prob
     if user_hessian == true
         throw(ArgumentError("\
@@ -63,20 +64,29 @@ function solve(prob::FidesProblem; options::FidesOptions = FidesOptions())::Fide
     return _solve(prob, nothing, options)
 end
 
-function _solve(prob::FidesProblem, hess_approximation::Union{HessianUpdate, Nothing}, options::FidesOptions)::FidesSolution
+function _solve(prob::FidesProblem, hess_approximation::Union{HessianUpdate, Nothing},
+                options::FidesOptions)::FidesSolution
     @unpack fides_objective_py, lb, ub = prob
     verbose_py = _get_verbose_py(options.verbose_level)
     options_py = _fides_options(options)
     if !isnothing(hess_approximation)
         hess_approximation_py = _get_hess_approximation_py(hess_approximation)
-        fides_opt_py = fides_py.Optimizer(fides_objective_py, np_py.asarray(ub), np_py.asarray(lb), options = options_py, hessian_update = hess_approximation_py, verbose = verbose_py)
+        fides_opt_py = fides_py.Optimizer(fides_objective_py, np_py.asarray(ub),
+                                          np_py.asarray(lb), options = options_py,
+                                          hessian_update = hess_approximation_py,
+                                          verbose = verbose_py)
     else
-        fides_opt_py = fides_py.Optimizer(fides_objective_py, np_py.asarray(ub), np_py.asarray(lb), options = options_py, verbose = verbose_py)
+        fides_opt_py = fides_py.Optimizer(fides_objective_py, np_py.asarray(ub),
+                                          np_py.asarray(lb), options = options_py,
+                                          verbose = verbose_py)
     end
     runtime = @elapsed begin
         res = fides_opt_py.minimize(np_py.asarray(prob.x0))
     end
-    return FidesSolution(PythonCall.pyconvert(Float64, res[0]), PythonCall.pyconvert(Vector{Float64}, res[1]), PythonCall.pyconvert(Int64, fides_opt_py.iteration), runtime, PythonCall.pyconvert(Symbol, fides_opt_py.exitflag._name_))
+    return FidesSolution(PythonCall.pyconvert(Float64, res[0]),
+                         PythonCall.pyconvert(Vector{Float64}, res[1]),
+                         PythonCall.pyconvert(Int64, fides_opt_py.iteration), runtime,
+                         PythonCall.pyconvert(Symbol, fides_opt_py.exitflag._name_))
 end
 
 function _get_hess_approximation_py(hess_approximation::HessianUpdate)
@@ -97,14 +107,17 @@ end
 function _get_hess_method(hess_approximation::Union{BFGS, DFP})
     @unpack init_with_hess, enforce_curv_cond, init_hess = hess_approximation
     if hess_approximation isa BFGS
-        return hess_approximation_py = fides_py.BFGS(init_with_hess = init_with_hess, enforce_curv_cond = enforce_curv_cond)
+        return hess_approximation_py = fides_py.BFGS(init_with_hess = init_with_hess,
+                                                     enforce_curv_cond = enforce_curv_cond)
     elseif hess_approximation isa DFP
-        return hess_approximation_py = fides_py.DFP(init_with_hess = init_with_hess, enforce_curv_cond = enforce_curv_cond)
+        return hess_approximation_py = fides_py.DFP(init_with_hess = init_with_hess,
+                                                    enforce_curv_cond = enforce_curv_cond)
     end
 end
 function _get_hess_method(hess_approximation::Broyden)
     @unpack phi, init_with_hess, enforce_curv_cond, init_hess = hess_approximation
-    return fides_py.Broyden(phi = phi, init_with_hess = init_with_hess, enforce_curv_cond = enforce_curv_cond)
+    return fides_py.Broyden(phi = phi, init_with_hess = init_with_hess,
+                            enforce_curv_cond = enforce_curv_cond)
 end
 
 function _init_hess!(hess_approximation_py, init_hess)::Nothing
