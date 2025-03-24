@@ -23,7 +23,7 @@ optimization, as described in [1, 2]. Optimization problems on the following for
 targeted:
 
 ```math
-\\min_x f(x) \\quad \text{s.t.} \\quad lb \\leq x \\leq ub
+\\min_x f(x) \\quad \\text{s.t.} \\quad lb \\leq x \\leq ub
 ```
 
 At each iteration, the Fides approximates the objective function by a second-order model:

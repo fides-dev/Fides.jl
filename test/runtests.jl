@@ -19,3 +19,7 @@ end
 @safetestset "Hessian approximations" begin
     include("hess_approximations.jl")
 end
+
+@safetestset "Show" begin
+    include("show.jl")
+end

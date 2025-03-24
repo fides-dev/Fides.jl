@@ -1,8 +1,10 @@
 module Fides
 
 using ComponentArrays: ComponentVector
+using Printf: @sprintf
 import PythonCall
 using SimpleUnPack: @unpack
+using StyledStrings: styled, @styled_str
 
 # To avoid pre-compilation problems
 const fides_py = PythonCall.pynew()
@@ -24,6 +26,7 @@ const HessianUpdate = Union{BB, SR1, BG, BFGS, DFP, Broyden}
 include(joinpath(@__DIR__, "problem.jl"))
 include(joinpath(@__DIR__, "options.jl"))
 include(joinpath(@__DIR__, "solve.jl"))
+include(joinpath(@__DIR__, "show.jl"))
 
 # Add when JuliaFormatter supports public
 #public BB, SR1, BG, BFGS, DFP, Broyden
