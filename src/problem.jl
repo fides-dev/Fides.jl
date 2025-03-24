@@ -3,7 +3,7 @@
 
 Optimization problem to be minimized with the Fides Newton Trust Region optimizer.
 
-## Positional Arguments
+## Arguments
 - `f`: The objective function to minimize. Accepts a vector as input and return a scalar.
 - `grad!`: In-place function to compute the gradient of `f` on the form `grad!(g, x)`.
 - `x0`: Initial starting point for the optimization. Can be a `Vector` or `ComponentVector`
@@ -37,6 +37,13 @@ Where, `Δₖ` is the trust region radius reflecting the confidence in the secon
 approximation, `∇f(xₖ)` of `f` at the current iteration `xₖ`, and `Bₖ` is a symmetric
 positive-semidefinite matrix, that is either the exact Hessian (if `hess!` is provided) or
 an approximation.
+
+## References
+1. Coleman, T. F., & Li, Y. (1994). On the convergence of interior-reflective Newton
+    methods for nonlinear minimization subject to bounds. Mathematical programming, 67(1),
+    189-224.
+2. Coleman, T. F., & Li, Y. (1996). An interior trust region approach for nonlinear
+    minimization subject to bounds. SIAM Journal on optimization, 6(2), 418-445.
 """
 struct FidesProblem{T <: AbstractVector}
     fides_objective::Function

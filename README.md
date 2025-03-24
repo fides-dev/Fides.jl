@@ -10,7 +10,7 @@
 Fides.jl is a Julia wrapper of the Python package [Fides.py](https://github.com/fides-dev/fides), which implements an Interior Trust Region Reflective for boundary costrained optimization problems based on [ADD]. Fides targets problems on the form:
 
 ```math
-\min_{x \in \mathbb{R}^n} f(x) \quad \mathrm{subject \ to} \quad lb \leq x \leq ub
+\min_{x \in \mathbb{R}^n} f(x) \quad \mathrm{subject \ to} \quad \text{lb} \leq x \leq \text{ub}
 ```
 
 Where `f` is a continues at least twice-differentaible function, and `lb` and `ub` are the lower and upper bounds respectively.
@@ -21,7 +21,7 @@ Where `f` is a continues at least twice-differentaible function, and `lb` and `u
 - Recursive reflective and truncated constraint management.
 - Full and 2D subproblem solution solvers.
 - Supports used provided HEssian, and BFGS, DFP, and SR1 Hessian approximations.
-- Good performance for parameter estimating Ordinary Differential Equation models.
+- Good performance for parameter estimating Ordinary Differential Equation models [3].
 
 Additional information and tutorials can be found in the documentation.
 
@@ -41,3 +41,9 @@ If you found Fides useful in your work, please cite the following paper:
   publisher={Public Library of Science San Francisco, CA USA}
 }
 ```
+
+## References
+
+1. Coleman, T. F., & Li, Y. (1994). On the convergence of interior-reflective Newton methods for nonlinear minimization subject to bounds. Mathematical programming, 67(1), 189-224.
+2. Coleman, T. F., & Li, Y. (1996). An interior trust region approach for nonlinear minimization subject to bounds. SIAM Journal on optimization, 6(2), 418-445.
+3. Fröhlich, F., & Sorger, P. K. (2022). Fides: Reliable trust-region optimization for parameter estimation of ordinary differential equation models. PLoS computational biology, 18(7), e1010322.
