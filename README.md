@@ -1,10 +1,10 @@
 # Fides.jl
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://sebapersson.github.io/Fides.jl/stable/)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://sebapersson.github.io/Fides.jl/dev/)
-[![Build Status](https://github.com/sebapersson/Fides.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/sebapersson/Fides.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://fides-dev.github.io/Fides.jl/stable/)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://fides-dev.github.io/Fides.jl/dev/)
+[![Build Status](https://github.com/fides-dev/Fides.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/fides-dev/Fides.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
-[![codecov](https://codecov.io/gh/sebapersson/Fides.jl/graph/badge.svg?token=J7PXRF30JG)](https://codecov.io/gh/sebapersson/Fides.jl)
+[![codecov](https://codecov.io/gh/fides-dev/Fides.jl/graph/badge.svg?token=J7PXRF30JG)](https://codecov.io/gh/fides-dev/Fides.jl)
 [![SciML Code Style](https://img.shields.io/static/v1?label=code%20style&message=SciML&color=9558b2&labelColor=389826)](https://github.com/SciML/SciMLStyle)
 
 Fides.jl is a Julia wrapper of the Python package [Fides.py](https://github.com/fides-dev/fides), which implements an Interior Trust Region Reflective for bounds constrained optimization problems based on [1, 2]. Fides targets problems on the form:

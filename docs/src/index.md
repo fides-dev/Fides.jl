@@ -17,7 +17,7 @@ Where `f` is a continues at least twice-differentaible function, and `lb` and `u
 - Good performance for parameter estimating Ordinary Differential Equation models [3].
 
 !!! note "Star us on GitHub!"
-    If you find the package useful in your work please consider giving us a star on [GitHub](https://github.com/sebapersson/Fides.jl). This will help us secure funding in the future to continue maintaining the package.
+    If you find the package useful in your work please consider giving us a star on [GitHub](https://github.com/fides-dev/Fides.jl). This will help us secure funding in the future to continue maintaining the package.
 
 ## Installation
 
@@ -41,7 +41,7 @@ If you have any problems using Fides, here are some helpful tips:
 
 - Check the Fides Python [documentation](https://fides-optimizer.readthedocs.io/en/latest/about.html).
 - Post your questions in the `#sciml-sysbio` or `#math-optimization` channel on the [Julia Slack](https://julialang.org/slack/).
-- If you have encountered unexpected behavior or a bug, please open an issue on [GitHub](https://github.com/sebapersson/Fides.jl).
+- If you have encountered unexpected behavior or a bug, please open an issue on [GitHub](https://github.com/fides-dev/Fides.jl).
 
 ## Citation
 

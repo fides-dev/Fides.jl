@@ -8,5 +8,6 @@ sol = solve(prob, Fides.BFGS())
 
 @testset "show" begin
     @test @sprintf("%s", prob) == "FidesProblem with 2 parameters to estimate"
-    @test @sprintf("%s", sol)[1:140] == "FidesSolution\n---------------- Summary ---------------\nmin(f)                = 3.30e-14\nParameters estimated  = 2\nOptimiser iterations  = 46"
+    @test @sprintf("%s", sol)[1:140] ==
+          "FidesSolution\n---------------- Summary ---------------\nmin(f)                = 3.30e-14\nParameters estimated  = 2\nOptimiser iterations  = 46"
 end
