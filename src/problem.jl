@@ -175,10 +175,6 @@ function _get_fides_results(obj::Float64, g::AbstractVector, py::Bool)
     return py ? (obj, np_py.array(g)) : (obj, g)
 end
 
-function _get_xinput!(xinput::InputVector, x::PythonCall.Py)::Nothing
-    xinput .= PythonCall.pyconvert(Vector{Float64}, x)
-    return nothing
-end
 function _get_xinput!(xinput::InputVector, x)::Nothing
     xinput .= x
     return nothing
