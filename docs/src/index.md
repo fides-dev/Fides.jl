@@ -1,6 +1,6 @@
 # Fides.jl
 
-Fides.jl is a Julia wrapper of the Python package [Fides.py](https://github.com/fides-dev/fides), which implements an Interior Trust Region Reflective for boundary costrained optimization problems based on [1, 2]. Fides targets problems on the form:
+Fides.jl is a Julia wrapper of the Python package [Fides.py](https://github.com/fides-dev/fides), which implements an Interior Trust Region Reflective algorithm for boundary constrained optimization problems based on [1, 2]. Fides targets problems on the form:
 
 ```math
 \min_{x \in \mathbb{R}^n} f(x) \quad \mathrm{subject \ to} \quad lb \leq x \leq ub
@@ -13,7 +13,7 @@ Where `f` is a continues at least twice-differentaible function, and `lb` and `u
 - Boundary-constrained interior trust-region optimization.
 - Recursive reflective and truncated constraint management.
 - Full and 2D subproblem solution solvers.
-- Supports used provided HEssian, and BFGS, DFP, and SR1 Hessian approximations.
+- Supports used provided Hessian, and BFGS, DFP, and SR1 Hessian approximations.
 - Good performance for parameter estimating Ordinary Differential Equation models [3].
 
 !!! note "Star us on GitHub!"

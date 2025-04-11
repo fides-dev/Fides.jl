@@ -31,9 +31,9 @@ end
     solve(prob::FidesProblem, hess_approximation; options = FidesOptions())
 
 Solve the given `FidesProblem` using the Fides Trust Region method, with the specified
-`hess_approximation` to approximate the Hessian matrix.
+`hess_approximation` method for approximating the Hessian matrix.
 
-A complete list of available Hessian approximations is provided in the documentation.
+A complete list of available Hessian approximations can be found in the API documentation.
 
 See also [FidesOptions](@ref).
 """

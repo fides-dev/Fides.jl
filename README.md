@@ -7,7 +7,7 @@
 [![codecov](https://codecov.io/gh/fides-dev/Fides.jl/graph/badge.svg?token=J7PXRF30JG)](https://codecov.io/gh/fides-dev/Fides.jl)
 [![SciML Code Style](https://img.shields.io/static/v1?label=code%20style&message=SciML&color=9558b2&labelColor=389826)](https://github.com/SciML/SciMLStyle)
 
-Fides.jl is a Julia wrapper of the Python package [Fides.py](https://github.com/fides-dev/fides), which implements an Interior Trust Region Reflective for bounds constrained optimization problems based on [1, 2]. Fides targets problems on the form:
+Fides.jl is a Julia wrapper of the Python package [Fides.py](https://github.com/fides-dev/fides), which implements an Interior Trust Region Reflective algorithm for bounds constrained optimization problems based on [1, 2]. Fides targets problems on the form:
 
 ```math
 \min_{x \in \mathbb{R}^n} f(x) \quad \mathrm{subject \ to} \quad \text{lb} \leq x \leq \text{ub}
