@@ -15,7 +15,7 @@ function fides_obj2(x)
     return (f, g, H)
 end
 
-x0, lb, ub, = [2.0, 2.0], [-10.0, -10.0], [10.0, 10.0]
+x0, lb, ub = [2.0, 2.0], [-10.0, -10.0], [10.0, 10.0]
 @testset "FidesProblem" begin
     prob1 = FidesProblem(rosenbrock, rosenbrock_grad!, x0; lb = lb, ub = ub)
     sol1 = solve(prob1, Fides.BFGS())

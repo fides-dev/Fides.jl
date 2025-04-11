@@ -4,7 +4,8 @@
 Optimization problem to be minimized with the Fides Newton Trust Region optimizer.
 
 ## Arguments
-- `f`: The objective function to minimize. Accepts a vector as input and return a scalar.
+- `f`: The objective function to minimize. Accepts a `Vector` or `ComponentVector` as input
+    and return a scalar.
 - `grad!`: In-place function to compute the gradient of `f` on the form `grad!(g, x)`.
 - `x0`: Initial starting point for the optimization. Can be a `Vector` or `ComponentVector`
     from [ComponentArrays.jl](https://github.com/SciML/ComponentArrays.jl).
@@ -15,6 +16,16 @@ Optimization problem to be minimized with the Fides Newton Trust Region optimize
 - `ub`: Upper parameter bounds. Defaults to `Inf` if not specified.
 
 See also [solve](@ref) and [FidesOptions](@ref).
+
+    FidesProblem(fides_obj, x0, hess::Bool; lb = nothing, ub = nothing)
+
+Optimization problem created from a function that computes:
+- `hess = false`: Objective and gradient; `fides_obj(x) -> (obj, g)`.
+- `hess = true`: Objective, gradient and Hessian; `fides_obj(x) -> (obj, g, H)`.
+
+Internally, Fides computes the objective function and derivatives simultaneously. Therefore,
+this constructor is the most runtime-efficient option when intermediate quantities can be
+reused between the objective and derivative computations.
 
 ## Description of Fides method
 
@@ -34,9 +45,9 @@ At each iteration, the Fides approximates the objective function by a second-ord
 ```
 
 Where, `Δₖ` is the trust region radius reflecting the confidence in the second-order
-approximation, `∇f(xₖ)` of `f` at the current iteration `xₖ`, and `Bₖ` is a symmetric
-positive-semidefinite matrix, that is either the exact Hessian (if `hess!` is provided) or
-an approximation.
+approximation, `∇f(xₖ)` is the gradient of `f` at the current iteration `xₖ`, and `Bₖ` is a
+symmetric positive-semidefinite matrix, that is either the exact Hessian (if `hess!` is
+provided) or an approximation.
 
 ## References
 1. Coleman, T. F., & Li, Y. (1994). On the convergence of interior-reflective Newton
@@ -65,17 +76,6 @@ function FidesProblem(f::Function, grad!::Function, x0::InputVector; hess! = not
     user_hessian = !isnothing(hess!)
     return FidesProblem(fides_objective, fides_objective_py, x0, _lb, _ub, user_hessian)
 end
-"""
-    FidesProblem(fides_obj, x0, hess::Bool; lb = nothing, ub = nothing)
-
-Optimization problem created from a function that computes:
-- `hess = false`: Objective and gradient; `fides_obj(x) -> (obj, g)`.
-- `hess = true`: Objective, gradient and Hessian; `fides_obj(x) -> (obj, g, H)`.
-
-Internally, Fides computes the objective function and derivatives simultaneously. Therefore,
-this constructor is the most runtime-efficient option when intermediate quantities can be
-reused between the objective and derivative computations.
-"""
 function FidesProblem(fides_objective::Function, x0::InputVector, hess::Bool; lb = nothing,
                       ub = nothing)
     _lb = _get_bounds(x0, lb, :lower)
