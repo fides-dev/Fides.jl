@@ -10,7 +10,7 @@ function test_hess_approximation(prob, hess_approximation; tol_fmin = 1e-8, tol_
 end
 
 fides_prob = FidesProblem(rosenbrock, rosenbrock_grad!, [2.0, 2.0]; lb = [-10.0, -10.0],
-                          ub = [10.0, 10.0])
+    ub = [10.0, 10.0])
 
 @testset "Hessian approximations" begin
     # Good approximation methods, should converge without problems

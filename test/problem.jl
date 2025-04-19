@@ -32,7 +32,7 @@ x0, lb, ub = [2.0, 2.0], [-10.0, -10.0], [10.0, 10.0]
     @test all(.≈(sol1.xmin, [1.0, 1.0]; atol = 1e-6))
 
     prob2 = FidesProblem(rosenbrock, rosenbrock_grad!, x0; hess! = rosenbrock_hess!,
-                         lb = lb, ub = ub)
+        lb = lb, ub = ub)
     sol2 = solve(prob2, Fides.CustomHessian())
     @test all(.≈(sol2.xmin, [1.0, 1.0]; atol = 1e-6))
 
