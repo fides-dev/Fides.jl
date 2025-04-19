@@ -25,11 +25,12 @@ Results are stored in a `FidesSolution` struct:
 Fides.FidesSolution
 ```
 
-## Hessian Approximations
+## Hessian Options
 
-In cases where the Hessian is too expensive or difficult to compute, several Hessian approximations are supported. The BFGS method is often effective:
+Multiple Hessian options and approximation methods are available. When the Hessian is too costly or difficult to compute, the `BFGS` method is often performant:
 
 ```@docs
+Fides.CustomHessian
 Fides.BFGS
 Fides.SR1
 Fides.DFP
