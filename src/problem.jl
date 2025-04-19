@@ -15,13 +15,17 @@ Optimization problem to be minimized with the Fides Newton Trust Region optimize
 - `lb`: Lower parameter bounds. Defaults to `-Inf` if not specified.
 - `ub`: Upper parameter bounds. Defaults to `Inf` if not specified.
 
+!!! note
+    In case a Hessian function is not provided, `Fides.CustomHessian()` must be provided to
+    `solve`.
+
 See also [solve](@ref) and [FidesOptions](@ref).
 
-    FidesProblem(fides_obj, x0, hess::Bool; lb = nothing, ub = nothing)
+    FidesProblem(fides_obj, x0; lb = nothing, ub = nothing)
 
 Optimization problem created from a function that computes:
-- `hess = false`: Objective and gradient; `fides_obj(x) -> (obj, g)`.
-- `hess = true`: Objective, gradient and Hessian; `fides_obj(x) -> (obj, g, H)`.
+- Objective and gradient; `fides_obj(x) -> (obj, g)`.
+- Objective, gradient and Hessian; `fides_obj(x) -> (obj, g, H)`.
 
 Internally, Fides computes the objective function and derivatives simultaneously. Therefore,
 this constructor is the most runtime-efficient option when intermediate quantities can be
@@ -76,15 +80,22 @@ function FidesProblem(f::Function, grad!::Function, x0::InputVector; hess! = not
     user_hessian = !isnothing(hess!)
     return FidesProblem(fides_objective, fides_objective_py, x0, _lb, _ub, user_hessian)
 end
-function FidesProblem(fides_objective::Function, x0::InputVector, hess::Bool; lb = nothing,
-                      ub = nothing)
+function FidesProblem(fides_objective::Function, x0::InputVector; lb = nothing, ub = nothing)
     _lb = _get_bounds(x0, lb, :lower)
     _ub = _get_bounds(x0, ub, :upper)
+    # Get number of output arguments
+    ret = fides_objective(x0)
+    if length(ret) < 2 || length(ret) > 3
+        throw(ArgumentError("Fides objective function can only return 2 or 3 values, not \
+            $(length(ret))"))
+    end
     # See xinput comment above
     xinput = similar(x0)
-    if hess == false
+    if length(ret) == 2
+        hess = false
         fides_objective_py = _get_fides_objective(fides_objective, nothing, xinput, true)
-    else
+    elseif length(ret) == 3
+        hess = true
         fides_objective_py = _get_fides_objective(fides_objective, xinput, true)
     end
     return FidesProblem(fides_objective, fides_objective_py, x0, _lb, _ub, hess)

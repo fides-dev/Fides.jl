@@ -1,4 +1,17 @@
 """
+    CustomHessian()
+
+User‑provided Hessian function.
+
+The Hessian function should be provided when creating a `FidesProblem`.
+
+See also: [FidesProblem](@ref)
+"""
+struct CustomHessian
+end
+
+
+"""
     BB(; init_hess = nothing}
 
 The Broydens “bad” method as introduced in [1]. This is a rank 1 update strategy that does

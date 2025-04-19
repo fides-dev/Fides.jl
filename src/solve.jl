@@ -28,52 +28,45 @@ struct FidesSolution
 end
 
 """
-    solve(prob::FidesProblem, hess_approximation; options = FidesOptions())
+    solve(prob::FidesProblem, hess_update; options = FidesOptions())
 
 Solve the given `FidesProblem` using the Fides Trust Region method, with the specified
-`hess_approximation` method for approximating the Hessian matrix.
+`hess_update` method for computing the Hessian matrix.
 
-A complete list of available Hessian approximations can be found in the API documentation.
+In case a custom Hessian is provided to `prob`, use `hess_update = Fides.CustomHessian`.
+Otherwise, a Hessian approximation must be provided, and a complete list of available
+approximations can be found in the
+[API](https://fides-dev.github.io/Fides.jl/stable/API/) documentation.
 
 See also [FidesOptions](@ref).
 """
-function solve(prob::FidesProblem, hess_approximation::HessianUpdate;
+function solve(prob::FidesProblem, hess_update::HessianUpdate;
                options::FidesOptions = FidesOptions())::FidesSolution
-    @unpack fides_objective_py, lb, ub, user_hessian = prob
-    if user_hessian == true
+    if prob.user_hessian == false && hess_update isa CustomHessian
         throw(ArgumentError("\
-            The FidesProblem has a user provided Hessian. In this case solve(prob; kwargs...)
-            should be called. Not solve(prob, hess_approximation; kwargs....) as a Hessian \
-            is not needed"))
+            The FidesProblem does not have a user provided Hessian. In this case \
+            solve(prob Fides.HessianApproximation; kwargs...) should be called. Not solve \
+            solve(prob Fides.CustomHessian; kwargs...) A complete list of Hessian \
+            approximations can be found in the API documentation"))
     end
-    return _solve(prob, hess_approximation, options)
-end
-"""
-    solve(prob::FidesProblem; options = FidesOptions())
-
-Solve the optimization problem `prob` with the Fides Trust region method with the user
-provided Hessian in `prob`.
-"""
-function solve(prob::FidesProblem; options::FidesOptions = FidesOptions())::FidesSolution
-    if prob.user_hessian == false
+    if prob.user_hessian == true && !(hess_update isa CustomHessian)
         throw(ArgumentError("\
-            The FidesProblem does not have a user provided Hessian. In this case
-            solve(prob, hess_approximation; kwargs....) should be called as a Hessian \
-            approximation is needed"))
+            The FidesProblem has a user provided Hessian. In this case \
+            solve(prob Fides.CustomHessian(); kwargs...) should be called. Not solve \
+            with a Hessian approximation (e.g. Fides.BFGS()) method"))
     end
-    return _solve(prob, nothing, options)
+    return _solve(prob, hess_update, options)
 end
 
-function _solve(prob::FidesProblem, hess_approximation::Union{HessianUpdate, Nothing},
-                options::FidesOptions)::FidesSolution
+function _solve(prob::FidesProblem, hess_update::HessianUpdate, options::FidesOptions)::FidesSolution
     @unpack fides_objective_py, lb, ub = prob
     verbose_py = _get_verbose_py(options.verbose_level)
     options_py = _fides_options(options)
-    if !isnothing(hess_approximation)
-        hess_approximation_py = _get_hess_approximation_py(hess_approximation)
+    if !(hess_update isa CustomHessian)
+        hess_update_py = _get_hess_update_py(hess_update)
         fides_opt_py = fides_py.Optimizer(fides_objective_py, np_py.asarray(ub),
                                           np_py.asarray(lb), options = options_py,
-                                          hessian_update = hess_approximation_py,
+                                          hessian_update = hess_update_py,
                                           verbose = verbose_py)
     else
         fides_opt_py = fides_py.Optimizer(fides_objective_py, np_py.asarray(ub),
@@ -89,42 +82,42 @@ function _solve(prob::FidesProblem, hess_approximation::Union{HessianUpdate, Not
                          PythonCall.pyconvert(Symbol, fides_opt_py.exitflag._name_))
 end
 
-function _get_hess_approximation_py(hess_approximation::HessianUpdate)
-    hess_approximation_py = _get_hess_method(hess_approximation)
-    _init_hess!(hess_approximation_py, hess_approximation.init_hess)
-    return hess_approximation_py
+function _get_hess_update_py(hess_update::HessianUpdate)
+    hess_update_py = _get_hess_method(hess_update)
+    _init_hess!(hess_update_py, hess_update.init_hess)
+    return hess_update_py
 end
 
-function _get_hess_method(hess_approximation::Union{BB, BG, SR1})
-    if hess_approximation isa BB
-        return hess_approximation_py = fides_py.BB(init_with_hess = hess_approximation.init_with_hess)
-    elseif hess_approximation isa BG
-        return hess_approximation_py = fides_py.BG(init_with_hess = hess_approximation.init_with_hess)
-    elseif hess_approximation isa SR1
-        return hess_approximation_py = fides_py.SR1(init_with_hess = hess_approximation.init_with_hess)
+function _get_hess_method(hess_update::Union{BB, BG, SR1})
+    if hess_update isa BB
+        return hess_update_py = fides_py.BB(init_with_hess = hess_update.init_with_hess)
+    elseif hess_update isa BG
+        return hess_update_py = fides_py.BG(init_with_hess = hess_update.init_with_hess)
+    elseif hess_update isa SR1
+        return hess_update_py = fides_py.SR1(init_with_hess = hess_update.init_with_hess)
     end
 end
-function _get_hess_method(hess_approximation::Union{BFGS, DFP})
-    @unpack init_with_hess, enforce_curv_cond, init_hess = hess_approximation
-    if hess_approximation isa BFGS
-        return hess_approximation_py = fides_py.BFGS(init_with_hess = init_with_hess,
+function _get_hess_method(hess_update::Union{BFGS, DFP})
+    @unpack init_with_hess, enforce_curv_cond, init_hess = hess_update
+    if hess_update isa BFGS
+        return hess_update_py = fides_py.BFGS(init_with_hess = init_with_hess,
                                                      enforce_curv_cond = enforce_curv_cond)
-    elseif hess_approximation isa DFP
-        return hess_approximation_py = fides_py.DFP(init_with_hess = init_with_hess,
+    elseif hess_update isa DFP
+        return hess_update_py = fides_py.DFP(init_with_hess = init_with_hess,
                                                     enforce_curv_cond = enforce_curv_cond)
     end
 end
-function _get_hess_method(hess_approximation::Broyden)
-    @unpack phi, init_with_hess, enforce_curv_cond, init_hess = hess_approximation
+function _get_hess_method(hess_update::Broyden)
+    @unpack phi, init_with_hess, enforce_curv_cond, init_hess = hess_update
     return fides_py.Broyden(phi = phi, init_with_hess = init_with_hess,
                             enforce_curv_cond = enforce_curv_cond)
 end
 
-function _init_hess!(hess_approximation_py, init_hess)::Nothing
+function _init_hess!(hess_update_py, init_hess)::Nothing
     isnothing(init_hess) && return nothing
     dim = size(init_hess)[1]
     init_hess_py = np_py.array(init_hess)
-    hess_approximation_py.init_mat(dim, init_hess_py)
+    hess_update_py.init_mat(dim, init_hess_py)
     return nothing
 end
 

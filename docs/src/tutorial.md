@@ -4,7 +4,7 @@ This overarching tutorial describes how to solve an optimization problem with Fi
 
 ## Input - a Function to Minimize
 
-Fides requires a function to minimize, its gradient and optionally its Hessian. In this tutorial, the nonlinear Rosenbrock function is used:
+Fides requires a function to minimize, its gradient and optionally its Hessian. In this tutorial, we use the nonlinear Rosenbrock function:
 
 ```math
 f(x_1, x_2) = (1.0 - x_1)^2 + 100.0(x_2 - x_1^2)^2
@@ -19,7 +19,7 @@ end
 nothing # hide
 ```
 
-In particular, `x` may be either a `Vector` or a `ComponentVector` from [ComponentArrays.jl](https://github.com/SciML/ComponentArrays.jl). Fides also requires the gradient, and optionally Hessian function. In this example, for convenience we compute both via automatic differentiation using [ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl):
+Where `x` may be either a `Vector` or a `ComponentVector` from [ComponentArrays.jl](https://github.com/SciML/ComponentArrays.jl). Fides also requires a gradient function, and optionally a Hessian function. In this example, for convenience we compute both via automatic differentiation using [ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl):
 
 ```@example 1
 using ForwardDiff
@@ -42,14 +42,14 @@ x0 = [ 2.0,  2.0]
 prob = FidesProblem(f, grad!, x0; lb = lb, ub = ub)
 ```
 
-Where `x0` is the initial guess for parameter estimation, and `lb` and `ub` are the lower and upper parameter bounds (defaulting to `-Inf` and `Inf` if unspecified). The problem is then minimized by calling `solve`, and when the Hessian is unavailable or too expensive to compute, a Hessian approximation is chosen during this step:
+Where `x0` is the initial guess for parameter estimation, and `lb` and `ub` are the lower and upper parameter bounds (defaulting to `-Inf` and `Inf` if unspecified). The problem is then minimized by calling `solve`. When the Hessian is unavailable or too expensive to compute, a Hessian approximation is provided during this step:
 
 ```@example 1
 sol = solve(prob, Fides.BFGS()) # hide
 sol = solve(prob, Fides.BFGS())
 ```
 
-Several Hessian approximations are supported (see the [API](@ref API)), and of these `BFGS` generally performs well. Additional tuning options can be set by providing a [`FidesOptions`](@ref) struct via the `options` keyword in `solve`, and a full list of available options is documented in the [API](@ref API).
+Several Hessian approximations are supported (see the [API](@ref API)), and `BFGS` generally performs well. Additional tuning options can be set by providing a [`FidesOptions`](@ref) struct via the `options` keyword in `solve`, and a full list of available options can be found in the [API](@ref API) documentation.
 
 ## Optimization with a User-Provided Hessian
 
@@ -57,15 +57,19 @@ If the Hessian (or a suitable approximation such as the [Gauss–Newton approxim
 
 ```@example 1
 prob = FidesProblem(f, grad!, x0; hess! = hess!, lb = lb, ub = ub)
-sol = solve(prob) # hide
-sol = solve(prob)
+nothing # hide
 ```
 
-Since a Hessian function is provided, no Hessian approximation needs to be specified.
+Then, when solving the problem use the `Fides.CustomHessian()` Hessian option:
+
+```@example 1
+sol = solve(prob, Fides.CustomHessian()) # hide
+sol = solve(prob, Fides.CustomHessian())
+```
 
 ## Performance tip: Computing Derivatives and Objective Simultaneously
 
-Internally, the objective function and its derivatives are computed simultaneously by Fides. Hence, runtime can be reduced if intermediate quantities are reused between the objective and derivative computations. To take advantage of this, a `FidesProblem` can be created with a function that computes the objective and gradient (and optionally the Hessian) for a given input. For example, when only the gradient is available:
+Internally, the objective function and its derivatives are computed simultaneously by Fides. Hence, runtime can be reduced if is is possible to reuse intermediate quantities between the objective and derivative computations. To take advantage of this, a `FidesProblem` can be created with a function that computes the objective and gradient (and optionally the Hessian) for a given input. For example, when only the gradient is available:
 
 ```@example 1
 function fides_obj(x)
@@ -74,13 +78,12 @@ function fides_obj(x)
     return (obj, g)
 end
 
-hess = false
-prob = FidesProblem(fides_obj, x0, hess; lb = lb, ub = ub)
+prob = FidesProblem(fides_obj, x0; lb = lb, ub = ub)
 sol = solve(prob, Fides.BFGS()) # hide
 sol = solve(prob, Fides.BFGS())
 ```
 
-Here, the variable `hess` indicates whether the objective function also returns the Hessian. When a Hessian function is available, do:
+When a Hessian function is available, do:
 
 ```@example 1
 function fides_obj(x)
@@ -90,10 +93,9 @@ function fides_obj(x)
     return (obj, g, H)
 end
 
-hess = true
-prob = FidesProblem(fides_obj, x0, hess; lb = lb, ub = ub)
-sol = solve(prob) # hide
-sol = solve(prob)
+prob = FidesProblem(fides_obj, x0; lb = lb, ub = ub)
+sol = solve(prob, Fides.CustomHessian()) # hide
+sol = solve(prob, Fides.CustomHessian())
 ```
 
-In this simple example, no runtime benefit is obtained as not quantities are reused between objective and derivative computations. However, if quantities can be reused (for example, when gradients are computed for ODE models), runtime can be noticeably reduced.
+In this simple example, no runtime benefit is obtained as no quantities are reused between objective and derivative computations. However, if quantities can be reused (for example, when gradients are computed for ODE models), runtime can be noticeably reduced.
