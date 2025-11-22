@@ -79,11 +79,11 @@ function _solve(prob::FidesProblem, hess_update::HessianUpdate,
         runtime = @elapsed begin
             res = fides_opt_py.minimize(np_py.asarray(prob.x0))
         end
-    # An initialization Hessian has been provided by the user
+        # An initialization Hessian has been provided by the user
     else
         hess_init_py = _get_hess_init_py(hess_update)
         runtime = @elapsed begin
-            res = fides_opt_py.minimize(np_py.asarray(prob.x0), hess0=hess_init_py)
+            res = fides_opt_py.minimize(np_py.asarray(prob.x0), hess0 = hess_init_py)
         end
     end
     return FidesSolution(PythonCall.pyconvert(Float64, res[0]),
