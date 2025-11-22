@@ -22,6 +22,7 @@ const InputVector = Union{Vector{<:Real}, ComponentVector{<:Real}}
 
 include(joinpath(@__DIR__, "hessian_update.jl"))
 const HessianUpdate = Union{BB, SR1, BG, BFGS, DFP, Broyden, CustomHessian}
+const HessianApproximation = Union{BB, SR1, BG, BFGS, DFP, Broyden}
 
 include(joinpath(@__DIR__, "problem.jl"))
 include(joinpath(@__DIR__, "options.jl"))
