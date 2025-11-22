@@ -74,8 +74,17 @@ function _solve(prob::FidesProblem, hess_update::HessianUpdate,
             np_py.asarray(lb), options = options_py,
             verbose = verbose_py)
     end
-    runtime = @elapsed begin
-        res = fides_opt_py.minimize(np_py.asarray(prob.x0))
+
+    if hess_update isa CustomHessian || hess_update.init_with_hess == false
+        runtime = @elapsed begin
+            res = fides_opt_py.minimize(np_py.asarray(prob.x0))
+        end
+        # An initialization Hessian has been provided by the user
+    else
+        hess_init_py = _get_hess_init_py(hess_update)
+        runtime = @elapsed begin
+            res = fides_opt_py.minimize(np_py.asarray(prob.x0), hess0 = hess_init_py)
+        end
     end
     return FidesSolution(PythonCall.pyconvert(Float64, res[0]),
         PythonCall.pyconvert(Vector{Float64}, res[1]),
@@ -83,43 +92,32 @@ function _solve(prob::FidesProblem, hess_update::HessianUpdate,
         PythonCall.pyconvert(Symbol, fides_opt_py.exitflag._name_))
 end
 
-function _get_hess_update_py(hess_update::HessianUpdate)
-    hess_update_py = _get_hess_method(hess_update)
-    _init_hess!(hess_update_py, hess_update.init_hess)
-    return hess_update_py
-end
-
-function _get_hess_method(hess_update::Union{BB, BG, SR1})
+function _get_hess_update_py(hess_update::Union{BB, BG, SR1})
     if hess_update isa BB
-        return hess_update_py = fides_py.BB(init_with_hess = hess_update.init_with_hess)
+        return hess_update_py = fides_py.BB()
     elseif hess_update isa BG
-        return hess_update_py = fides_py.BG(init_with_hess = hess_update.init_with_hess)
+        return hess_update_py = fides_py.BG()
     elseif hess_update isa SR1
-        return hess_update_py = fides_py.SR1(init_with_hess = hess_update.init_with_hess)
+        return hess_update_py = fides_py.SR1()
     end
 end
-function _get_hess_method(hess_update::Union{BFGS, DFP})
-    @unpack init_with_hess, enforce_curv_cond, init_hess = hess_update
+function _get_hess_update_py(hess_update::Union{BFGS, DFP})
+    enforce_curv_cond = hess_update.enforce_curv_cond
     if hess_update isa BFGS
-        return hess_update_py = fides_py.BFGS(init_with_hess = init_with_hess,
-            enforce_curv_cond = enforce_curv_cond)
+        return hess_update_py = fides_py.BFGS(enforce_curv_cond = enforce_curv_cond)
     elseif hess_update isa DFP
-        return hess_update_py = fides_py.DFP(init_with_hess = init_with_hess,
-            enforce_curv_cond = enforce_curv_cond)
+        return hess_update_py = fides_py.DFP(enforce_curv_cond = enforce_curv_cond)
     end
 end
-function _get_hess_method(hess_update::Broyden)
-    @unpack phi, init_with_hess, enforce_curv_cond, init_hess = hess_update
-    return fides_py.Broyden(phi = phi, init_with_hess = init_with_hess,
-        enforce_curv_cond = enforce_curv_cond)
+function _get_hess_update_py(hess_update::Broyden)
+    @unpack phi, enforce_curv_cond = hess_update
+    return fides_py.Broyden(phi = phi, enforce_curv_cond = enforce_curv_cond)
 end
 
-function _init_hess!(hess_update_py, init_hess)::Nothing
-    isnothing(init_hess) && return nothing
-    dim = size(init_hess)[1]
-    init_hess_py = np_py.array(init_hess)
-    hess_update_py.init_mat(dim, init_hess_py)
-    return nothing
+function _get_hess_init_py(hess_update::HessianApproximation)
+    @assert hess_update.init_with_hess == true "Function for user provided Hessian \
+        called even though Hessian not provided. Please report as bug on GitHub"
+    return np_py.array(hess_update.init_hess)
 end
 
 function _get_init_with_hess(init_hess)::Bool
