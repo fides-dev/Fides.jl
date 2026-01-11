@@ -84,4 +84,11 @@ fides_prob = FidesProblem(
     @test sol.fmin ≈ 0.0 atol = 1.0e-8
     sol = solve(fides_prob, Fides.BFGS(); options = FidesOptions(subspace_solver = "full"))
     @test sol.fmin ≈ 0.0 atol = 1.0e-8
+    # Test different options for solve
+    sol = solve(fides_prob, Fides.BFGS(); options = FidesOptions(verbose = "info"))
+    @test sol.fmin ≈ 0.0 atol = 1.0e-8
+    sol = solve(fides_prob, Fides.BFGS(); options = FidesOptions(verbose = "error"))
+    @test sol.fmin ≈ 0.0 atol = 1.0e-8
+    sol = solve(fides_prob, Fides.BFGS(); options = FidesOptions(verbose = "debug"))
+    @test sol.fmin ≈ 0.0 atol = 1.0e-8
 end
