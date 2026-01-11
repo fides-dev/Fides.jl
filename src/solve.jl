@@ -40,8 +40,9 @@ approximations can be found in the
 
 See also [FidesOptions](@ref).
 """
-function solve(prob::FidesProblem, hess_update::HessianUpdate;
-        options::FidesOptions = FidesOptions())::FidesSolution
+function solve(
+        prob::FidesProblem, hess_update::HessianUpdate; options::FidesOptions = FidesOptions()
+    )::FidesSolution
     if prob.user_hessian == false && hess_update isa CustomHessian
         throw(ArgumentError("\
             The FidesProblem does not have a user provided Hessian. In this case \
@@ -58,21 +59,23 @@ function solve(prob::FidesProblem, hess_update::HessianUpdate;
     return _solve(prob, hess_update, options)
 end
 
-function _solve(prob::FidesProblem, hess_update::HessianUpdate,
-        options::FidesOptions)::FidesSolution
+function _solve(
+        prob::FidesProblem, hess_update::HessianUpdate, options::FidesOptions
+    )::FidesSolution
     @unpack fides_objective_py, lb, ub = prob
     verbose_py = _get_verbose_py(options.verbose_level)
     options_py = _fides_options(options)
     if !(hess_update isa CustomHessian)
         hess_update_py = _get_hess_update_py(hess_update)
-        fides_opt_py = fides_py.Optimizer(fides_objective_py, np_py.asarray(ub),
-            np_py.asarray(lb), options = options_py,
-            hessian_update = hess_update_py,
-            verbose = verbose_py)
+        fides_opt_py = fides_py.Optimizer(
+            fides_objective_py, np_py.asarray(ub), np_py.asarray(lb), options = options_py,
+            hessian_update = hess_update_py, verbose = verbose_py
+        )
     else
-        fides_opt_py = fides_py.Optimizer(fides_objective_py, np_py.asarray(ub),
-            np_py.asarray(lb), options = options_py,
-            verbose = verbose_py)
+        fides_opt_py = fides_py.Optimizer(
+            fides_objective_py, np_py.asarray(ub), np_py.asarray(lb), options = options_py,
+            verbose = verbose_py
+        )
     end
 
     if hess_update isa CustomHessian || hess_update.init_with_hess == false
@@ -86,10 +89,12 @@ function _solve(prob::FidesProblem, hess_update::HessianUpdate,
             res = fides_opt_py.minimize(np_py.asarray(prob.x0), hess0 = hess_init_py)
         end
     end
-    return FidesSolution(PythonCall.pyconvert(Float64, res[0]),
+    return FidesSolution(
+        PythonCall.pyconvert(Float64, res[0]),
         PythonCall.pyconvert(Vector{Float64}, res[1]),
         PythonCall.pyconvert(Int64, fides_opt_py.iteration), runtime,
-        PythonCall.pyconvert(Symbol, fides_opt_py.exitflag._name_))
+        PythonCall.pyconvert(Symbol, fides_opt_py.exitflag._name_)
+    )
 end
 
 function _get_hess_update_py(hess_update::Union{BB, BG, SR1})
