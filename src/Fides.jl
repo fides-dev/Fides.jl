@@ -13,6 +13,7 @@ const np_py = PythonCall.pynew()
 function __init__()
     PythonCall.pycopy!(fides_py, PythonCall.pyimport("fides"))
     PythonCall.pycopy!(np_py, PythonCall.pyimport("numpy"))
+    return nothing
 end
 
 const STEPBACK_STRATEGIES = ["mixed", "refine", "reflect", "reflect_single", "truncate"]

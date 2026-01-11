@@ -55,13 +55,15 @@ struct FidesOptions{T <: Union{String, Nothing}}
     gamma2::Float64
     history_file::T
 end
-function FidesOptions(; maxiter::Integer = 1000, fatol::Float64 = 1e-8,
-        frtol::Float64 = 1e-8, gatol::Float64 = 1e-6, grtol::Float64 = 0.0,
+function FidesOptions(;
+        maxiter::Integer = 1000, fatol::Float64 = 1.0e-8,
+        frtol::Float64 = 1.0e-8, gatol::Float64 = 1.0e-6, grtol::Float64 = 0.0,
         xtol::Float64 = 0.0, maxtime::Float64 = Inf, verbose = "warning",
         subspace_solver::String = "2D", stepback_strategy::String = "reflect",
         delta_init::Float64 = 1.0, mu::Float64 = 0.25, eta::Float64 = 0.75,
         theta_max = 0.95, gamma1::Float64 = 0.25, gamma2::Float64 = 2.0,
-        history_file = nothing)::FidesOptions
+        history_file = nothing
+    )::FidesOptions
     if !(stepback_strategy in STEPBACK_STRATEGIES)
         throw(ArgumentError("$(stepback_strategy) is not a valid stepback strategy. \
             Valid options are $(STEPBACK_STRATEGIES)"))
@@ -75,9 +77,10 @@ function FidesOptions(; maxiter::Integer = 1000, fatol::Float64 = 1e-8,
             options are $(LOGGING_LEVELS)"))
     end
 
-    return FidesOptions(maxiter, fatol, frtol, gatol, grtol, xtol, maxtime, verbose,
-        stepback_strategy, subspace_solver, delta_init, mu, eta, theta_max,
-        gamma1, gamma2, history_file)
+    return FidesOptions(
+        maxiter, fatol, frtol, gatol, grtol, xtol, maxtime, verbose, stepback_strategy,
+        subspace_solver, delta_init, mu, eta, theta_max, gamma1, gamma2, history_file
+    )
 end
 
 """
@@ -113,8 +116,12 @@ end
 
 function _get_verbose_py(verbose::String)::Int64
     @assert verbose in LOGGING_LEVELS "Incorrect verbose level $verbose"
-    verbose == "warning" && return 30
-    verbose == "info" && return 20
-    verbose == "error" && return 40
-    verbose == "debug" && return 10
+    if verbose == "warning"
+        return 30
+    elseif verbose == "info"
+        return 20
+    elseif verbose == "error"
+        return 40
+    end
+    return 10
 end
