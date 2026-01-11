@@ -5,7 +5,7 @@
 [![Build Status](https://github.com/fides-dev/Fides.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/fides-dev/Fides.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 [![codecov](https://codecov.io/gh/fides-dev/Fides.jl/graph/badge.svg?token=J7PXRF30JG)](https://codecov.io/gh/fides-dev/Fides.jl)
-[![SciML Code Style](https://img.shields.io/static/v1?label=code%20style&message=SciML&color=9558b2&labelColor=389826)](https://github.com/SciML/SciMLStyle)
+[![code style: runic](https://img.shields.io/badge/code_style-%E1%9A%B1%E1%9A%A2%E1%9A%BE%E1%9B%81%E1%9A%B2-black)](https://github.com/fredrikekre/Runic.jl)
 
 Fides.jl is a Julia wrapper of the Python package [Fides.py](https://github.com/fides-dev/fides), which implements an Interior Trust Region Reflective algorithm for bounds constrained optimization problems based on [1, 2]. Fides targets problems on the form:
 
@@ -15,7 +15,7 @@ Fides.jl is a Julia wrapper of the Python package [Fides.py](https://github.com/
 
 Where `f` is a continues at least twice-differentiable function, and `lb` and `ub` are the lower and upper bounds respectively.
 
-## Highlights
+## Main features
 
 - Boundary-constrained interior trust-region optimization.
 - Recursive reflective and truncated constraint management.

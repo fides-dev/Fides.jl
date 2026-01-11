@@ -101,8 +101,9 @@ struct BFGS{T <: Union{Nothing, AbstractMatrix}}
     enforce_curv_cond::Bool
     init_with_hess::Bool
 end
-function BFGS(; init_hess::Union{Nothing, AbstractMatrix} = nothing,
-        enforce_curv_cond::Bool = true)
+function BFGS(;
+        init_hess::Union{Nothing, AbstractMatrix} = nothing, enforce_curv_cond::Bool = true
+    )
     init_with_hess = _get_init_with_hess(init_hess)
     return BFGS(init_hess, enforce_curv_cond, init_with_hess)
 end
@@ -128,8 +129,9 @@ struct DFP{T <: Union{Nothing, AbstractMatrix}}
     enforce_curv_cond::Bool
     init_with_hess::Bool
 end
-function DFP(; init_hess::Union{Nothing, AbstractMatrix} = nothing,
-        enforce_curv_cond::Bool = true)
+function DFP(;
+        init_hess::Union{Nothing, AbstractMatrix} = nothing, enforce_curv_cond::Bool = true
+    )
     init_with_hess = _get_init_with_hess(init_hess)
     return DFP(init_hess, enforce_curv_cond, init_with_hess)
 end
@@ -162,8 +164,10 @@ struct Broyden{T <: Union{Nothing, AbstractMatrix}}
     enforce_curv_cond::Bool
     init_with_hess::Bool
 end
-function Broyden(phi::AbstractFloat; init_hess::Union{Nothing, AbstractMatrix} = nothing,
-        enforce_curv_cond::Bool = true)
+function Broyden(
+        phi::AbstractFloat; init_hess::Union{Nothing, AbstractMatrix} = nothing,
+        enforce_curv_cond::Bool = true
+    )
     init_with_hess = _get_init_with_hess(init_hess)
     return Broyden(phi, init_hess, enforce_curv_cond, init_with_hess)
 end
