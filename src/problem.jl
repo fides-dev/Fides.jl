@@ -19,7 +19,7 @@ Optimization problem to be minimized with the Fides Newton Trust Region optimize
     In case a Hessian function is not provided, `Fides.CustomHessian()` must be provided to
     `solve`.
 
-See also [solve](@ref) and [FidesOptions](@ref).
+See also [`solve`](@ref) and [`FidesOptions`](@ref).
 
     FidesProblem(fides_obj, x0; lb = nothing, ub = nothing)
 

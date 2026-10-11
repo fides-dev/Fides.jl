@@ -5,7 +5,7 @@ User‑provided Hessian function.
 
 The Hessian function should be provided when creating a `FidesProblem`.
 
-See also: [FidesProblem](@ref)
+See also: [`FidesProblem`](@ref)
 """
 struct CustomHessian
 end

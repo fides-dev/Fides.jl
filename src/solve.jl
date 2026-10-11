@@ -38,7 +38,7 @@ Otherwise, a Hessian approximation must be provided, and a complete list of avai
 approximations can be found in the
 [API](https://fides-dev.github.io/Fides.jl/stable/API/) documentation.
 
-See also [FidesOptions](@ref).
+See also [`FidesOptions`](@ref).
 """
 function solve(
         prob::FidesProblem, hess_update::HessianUpdate; options::FidesOptions = FidesOptions()
